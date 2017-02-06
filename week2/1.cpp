@@ -9,28 +9,36 @@ Your task is to to calculate how many candidates are elected to the Council, giv
 #include <iostream>
 #include <cstdlib>
 #include <ctime>
+#include <climits>
 #define ll long long
 
-int partition(ll a[],int beg,int end)
+void merge(ll a[],int beg,int mid,int end)
 {
-	srand((unsigned)time(NULL));
-	int random_pivot = beg + rand() % (end - beg);
-	std::swap(a[random_pivot],a[beg]);
-	int x = a[beg];
-	int i = beg,j;
-	for(j = beg + 1;j < end; j++)
-		if(a[j] < x)
-			std::swap(a[++i],a[j]);
-	std::swap(a[beg],a[i]);
-	return i;
+	int n1 = mid - beg;
+	int n2 = end - mid;
+	ll b[n1+1],c[n2+1];
+
+	int i,j,k;
+	for(k = beg,i = 0;i < n1; i++,k++)
+		b[i] = a[k];
+	b[n1] = INT_MAX;
+
+	for(j = 0;j < n2; j++,k++)
+		c[j] = a[k];
+	c[n2] = INT_MAX;
+
+	i = j = 0;
+	for(k = beg;k < end; k++)
+		a[k] = (b[i] < c[j])?b[i++]:c[j++];
 }
-void quick_sort(ll a[],int beg,int end)
+void merge_sort(ll a[],int beg,int end)
 {
 	if(end - beg <= 1)
 		return;
-	int q = partition(a,beg,end);
-	quick_sort(a,beg,q);
-	quick_sort(a,q+1,end);
+	int mid = (beg + end) / 2;
+	merge_sort(a,beg,mid);
+	merge_sort(a,mid,end);
+	merge(a,beg,mid,end);
 }
 void mergeArray(ll A[], int m, ll B[], int n, ll C[], int totalSize)
 {
@@ -65,11 +73,11 @@ int main()
 	for(int i = 0; i < n5; i++)
 		std::cin >> arr5[i];
 
-	quick_sort(arr1, 0, n1);
-	quick_sort(arr2, 0, n2);
-	quick_sort(arr3, 0, n3);
-	quick_sort(arr4, 0, n4);
-	quick_sort(arr5, 0, n5);
+	merge_sort(arr1, 0, n1);
+	merge_sort(arr2, 0, n2);
+	merge_sort(arr3, 0, n3);
+	merge_sort(arr4, 0, n4);
+	merge_sort(arr5, 0, n5);
 
 
 	int n12 = n1 + n2;
